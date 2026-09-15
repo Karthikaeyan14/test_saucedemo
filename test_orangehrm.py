@@ -5,11 +5,8 @@ from PageObjectMode.admin import admin
 def test_saucedemo(broswerInstance):
     driver=broswerInstance
     enter_login=login_details(driver)
-    enter_login.enter_login_details()
+    enter_login.enter_login_details('standard_user', 'secret_sauce')
     product=admin(driver)
     product.method()
     product.checkout()
     product.processed()
-
-
-
