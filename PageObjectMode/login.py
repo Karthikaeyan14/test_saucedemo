@@ -13,11 +13,11 @@ class login_details:
         self.click_login_button=(By.ID,"login-button")
 
 
-    def enter_login_details(self,username,password):
+    def enter_login_details(self,user,pass_1):
         username=self.wait.until(EC.presence_of_element_located(self.username))
-        username.send_keys(username)
+        username.send_keys(user)
         password=self.wait.until(EC.presence_of_element_located(self.password))
-        password.send_keys(password)
+        password.send_keys(pass_1)
         login_button=self.wait.until(EC.element_to_be_clickable(self.click_login_button))
         login_button.click()
 
