@@ -1,5 +1,4 @@
 import pytest
-from django.template.defaultfilters import title
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC

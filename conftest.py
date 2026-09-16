@@ -6,10 +6,11 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 
 
-
+#fixture for browser instance
 @pytest.fixture(scope='function')
 
 def broswerInstance():
+    #to remove the save password pop up in chrome browser we need to add below code in conftest.py file
     chrome_options = webdriver.ChromeOptions()
     prefs = {
         "credentials_enable_service": False,
@@ -26,3 +27,10 @@ def broswerInstance():
     yield driver
     driver.quit()
 
+
+
+#when we install pytest.ini for markers we need to add this function in conftest.py file
+def pytest_configure(config):
+    config.addinivalue_line(
+        "markers", "env(name): mark test to run only on named environment"
+    )

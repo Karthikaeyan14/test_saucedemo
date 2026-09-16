@@ -1,0 +1,14 @@
+{
+    "data": [
+        {
+            "user_name": "standard_user",
+            "password": "secret_sauce"
+        }
+    ],
+    "wrong_data": [
+        {
+            "user_name": "wrong_user",
+            "password": "wrong_password"
+        }
+    ]
+}

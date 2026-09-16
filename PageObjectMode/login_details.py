@@ -11,6 +11,7 @@ class login_details:
         self.username=(By.CSS_SELECTOR,"input[name='user-name']")
         self.password=(By.CSS_SELECTOR,"input[name='password']")
         self.click_login_button=(By.ID,"login-button")
+        self.login_error=(By.XPATH,"//h3[@data-test='error']")
 
 
     def enter_login_details(self,user,pass_1):
@@ -20,4 +21,7 @@ class login_details:
         password.send_keys(pass_1)
         login_button=self.wait.until(EC.element_to_be_clickable(self.click_login_button))
         login_button.click()
+
+    def login_error_message(self):
+        return self.wait.until(EC.visibility_of_element_located(self.login_error)).text
 
