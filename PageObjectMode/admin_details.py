@@ -22,6 +22,7 @@ class admin:
         self.payment_info = (By.XPATH, "//div[@data-test='payment-info-value']")
         self.finish_button = (By.XPATH, "//button[text()='Finish']")
         self.login_error = (By.XPATH, "//h3[@data-test='error']")
+        self.remove_product_cart=(By.ID,"remove-sauce-labs-bike-light")
 
 
     def sort_products(self):
@@ -53,6 +54,13 @@ class admin:
         print("Total cart Count is:", cart_count)
         return cart_count
 
+    def remove_product_from_cart(self):
+        remove_button = self.wait.until(EC.element_to_be_clickable(self.remove_product_cart))
+        remove_button.click()
+        print("Product removed from cart.")
+        return self.get_cart_count()    
+    
+    
     def checkout(self):
         cart = self.wait.until(EC.element_to_be_clickable(self.cart_button))
         cart.click()
@@ -87,6 +95,8 @@ class admin:
         #print(error_message)
         return error_message
     
+    
+    
     def customer_detail(self):
         cart = self.wait.until(EC.element_to_be_clickable(self.cart_button))
         cart.click()   
@@ -98,6 +108,7 @@ class admin:
         
         print(self.error_message())
         
+        assert self.error_message() == "Error: First Name is required"
             
 
 

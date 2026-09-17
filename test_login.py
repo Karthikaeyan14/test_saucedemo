@@ -77,3 +77,22 @@ def test_customer_not_update(broswerInstance):
     product = admin(driver)
     product.method()
     product.customer_detail()
+    
+    assert product.error_message() == "Error: First Name is required"
+
+@pytest.mark.remove_product
+def test_remove_product_from_cart(broswerInstance):
+    """Verify that the cart count decreases after removing a product from the cart."""
+    driver = broswerInstance
+    login_page = LoginPage(driver)
+    login_page.login("standard_user", "secret_sauce")
+
+    
+    product = admin(driver)
+    product.method()
+    
+    initial_cart_count = product.get_cart_count()
+    product.remove_product_from_cart()
+    updated_cart_count = product.get_cart_count()
+    
+    assert updated_cart_count == initial_cart_count - 1

@@ -58,6 +58,7 @@ class LoginPage:
 
         assert first_cart_count == second_cart_count
         return first_cart_count, second_cart_count
+    
 
 
 # Backward compatible alias for the older test imports.
