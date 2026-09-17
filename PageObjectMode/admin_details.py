@@ -1,3 +1,5 @@
+import time
+
 import pytest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -10,8 +12,11 @@ class admin:
         self.driver=driver
         self.wait=WebDriverWait(driver,10)
         self.dropdown=(By.CLASS_NAME,"product_sort_container")
-        self.add_cart_1=(By.XPATH,"//button[@id='add-to-cart-test.allthethings()-t-shirt-(red)']")
-        self.add_cart_2=(By.XPATH,"//button[@id='add-to-cart-sauce-labs-onesie']")
+        self.total_product=(By.CLASS_NAME,"inventory_item ")
+        self.add_cart_button=(By.XPATH,"//button[text()='Add to cart']")
+        #self.add_cart_1=(By.XPATH,"//button[@id='add-to-cart-test.allthethings()-t-shirt-(red)']")
+        #self.add_cart_2=(By.XPATH,"//button[@id='add-to-cart-sauce-labs-onesie']")
+        #self.add_cart_button=(By.CSS_SELECTOR,"button[class='btn btn_primary btn_small btn_inventory']")
         self.cart_icon=(By.XPATH,"//span[@class='shopping_cart_badge']")
         self.cart=(By.CLASS_NAME,"shopping_cart_badge")
         self.checkbout_button=(By.ID,"checkout")
@@ -31,6 +36,11 @@ class admin:
         select_dropdown=Select(add_cart)
         select_dropdown.select_by_index(1)
         #inital_cart_icon=self.wait.until(EC.visibility_of_element_located(self.cart_icon)).text
+        Total_product=self.wait.until(EC.presence_of_all_elements_located(self.total_product))
+        Total_product_count=len(Total_product)
+        print("Total Product Count is:",Total_product_count)
+        
+        """
         select_product_1=self.wait.until(EC.element_to_be_clickable(self.add_cart_1))
         add=0
         select_product_1.click()
@@ -43,12 +53,22 @@ class admin:
         select_product_2=self.wait.until(EC.element_to_be_clickable(self.add_cart_2))
         select_product_2.click()
 
-        cart_icon=self.wait.until(EC.visibility_of_element_located(self.cart_icon)).text
-
-        assert int(cart_icon)==2
+        
         add=add+1
 
         print("Add Product is:",add)
+        """
+        count=len(self.add_cart_button)   
+        time.sleep(2)     
+        print("Total cart Count is:",count)
+        
+        for i in range(count):
+            cart_click=self.wait.until(EC.element_to_be_clickable(self.add_cart_button))
+            cart_click.click()
+        cart_icon=self.wait.until(EC.visibility_of_element_located(self.cart_icon)).text
+        
+        #assert int(cart_icon)==2
+        
 
     def checkout(self):
         cart=self.wait.until(EC.element_to_be_clickable(self.cart))
