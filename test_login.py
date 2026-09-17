@@ -1,8 +1,10 @@
-import pytest
-from PageObjectMode.login_details import login_details
-from PageObjectMode.admin_details import admin
 import json
 from pathlib import Path
+
+import pytest
+
+from PageObjectMode.admin_details import admin
+from PageObjectMode.login_details import LoginPage
 
 DATA_FILE = Path(__file__).parent / "json" / "test_correctlogindetails.json"
 
@@ -15,44 +17,63 @@ invalid_login_data = test_data["wrong_data"]
 
 @pytest.mark.parametrize("test_item_data", valid_login_data)
 @pytest.mark.regression
-def test_saucedemo(broswerInstance,test_item_data):
-    #Correct login details
-    driver=broswerInstance
-    enter_login=login_details(driver)
-    enter_login.enter_login_details(test_item_data['user_name'], test_item_data['password'])
-    
-    product=admin(driver)
+def test_saucedemo(broswerInstance, test_item_data):
+    """Verify that a valid login flow reaches the product checkout flow."""
+    driver = broswerInstance
+    login_page = LoginPage(driver)
+    login_page.login(test_item_data["user_name"], test_item_data["password"])
+
+    product = admin(driver)
     product.method()
     product.checkout()
     product.processed()
+
 
 @pytest.mark.parametrize("login_data", invalid_login_data)
 @pytest.mark.smoke
 def test_invalid_login(broswerInstance, login_data):
     """Verify that invalid credentials display a login error."""
-    login_page = login_details(broswerInstance)
-    login_page.enter_login_details(login_data["user_name"], login_data["password"])
-    error_message = login_page.login_error_message()
+    login_page = LoginPage(broswerInstance)
+    login_page.login(login_data["user_name"], login_data["password"])
+    error_message = login_page.get_login_error_message()
     assert error_message == (
         "Epic sadface: Username and password do not match any user in this service"
     )
-    print("Error message is:", error_message)
-    
+
 
 @pytest.mark.smoke
 def test_empty_login(broswerInstance):
-    #verify that empty credentials display a login error.
-    login_page = login_details(broswerInstance)
-    login_page.enter_login_details("", "")
-    error_message = login_page.login_error_message()
+    """Verify that an empty username triggers the correct validation message."""
+    login_page = LoginPage(broswerInstance)
+    login_page.login("", "")
+    error_message = login_page.get_login_error_message()
     assert error_message == "Epic sadface: Username is required"
-    print("Error message is:", error_message)
-    
+
+
 @pytest.mark.smoke
 def test_empty_password(broswerInstance):
-    #verify that empty password display a login error.
-    login_page = login_details(broswerInstance)
-    login_page.enter_login_details("standard_user", "")
-    error_message = login_page.login_error_message()
+    """Verify that an empty password triggers the correct validation message."""
+    login_page = LoginPage(broswerInstance)
+    login_page.login("standard_user", "")
+    error_message = login_page.get_login_error_message()
     assert error_message == "Epic sadface: Password is required"
-    print("Error message is:", error_message)
+
+
+@pytest.mark.relogin
+def test_relogin(broswerInstance):
+    """Verify that the cart count remains the same after logout and login again."""
+    login_page = LoginPage(broswerInstance)
+    first_cart_count, second_cart_count = login_page.relogin("standard_user", "secret_sauce")
+    assert first_cart_count == second_cart_count
+
+
+@pytest.mark.relogin
+def test_customer_not_update(broswerInstance):
+    """Verify that the cart count remains the same after logout and login again."""
+    driver = broswerInstance
+    login_page = LoginPage(driver)
+    login_page.login("standard_user", "secret_sauce")
+    
+    product = admin(driver)
+    product.method()
+    product.customer_detail()
