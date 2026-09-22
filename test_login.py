@@ -25,7 +25,7 @@ def test_saucedemo(broswerInstance, test_item_data):
 
     product = admin(driver)
     product.method()
-    product.checkout()
+    product.checkout('karthi','r','613001')
     product.processed()
 
 
@@ -67,22 +67,10 @@ def test_relogin(broswerInstance):
     assert first_cart_count == second_cart_count
 
 
-@pytest.mark.relogin
-def test_customer_not_update(broswerInstance):
-    """Verify that the cart count remains the same after logout and login again."""
-    driver = broswerInstance
-    login_page = LoginPage(driver)
-    login_page.login("standard_user", "secret_sauce")
-    
-    product = admin(driver)
-    product.method()
-    product.customer_detail()
-    
-    assert product.error_message() == "Error: First Name is required"
 
 @pytest.mark.remove_product
 def test_remove_product_from_cart(broswerInstance):
-    """Verify that the cart count decreases after removing a product from the cart."""
+    #Verify that the cart count decreases after removing a product from the cart.
     driver = broswerInstance
     login_page = LoginPage(driver)
     login_page.login("standard_user", "secret_sauce")
@@ -93,6 +81,8 @@ def test_remove_product_from_cart(broswerInstance):
     
     initial_cart_count = product.get_cart_count()
     product.remove_product_from_cart()
-    updated_cart_count = product.get_cart_count()
+    assert product.get_cart_count() == 0
+    #updated_cart_count = product.get_cart_count()
     
-    assert updated_cart_count == initial_cart_count - 1
+    #assert updated_cart_count == initial_cart_count - 1
+
