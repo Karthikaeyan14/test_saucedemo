@@ -25,6 +25,7 @@ def test_saucedemo(broswerInstance, test_item_data):
 
     product = admin(driver)
     product.method()
+    product.cart_details()
     product.checkout('karthi','r','613001')
     product.processed()
 

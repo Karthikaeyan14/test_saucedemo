@@ -26,6 +26,7 @@ class admin:
         self.remove_product_cart = (By.XPATH, "//button[text()='Remove']")
         self.total_price_details=(By.CLASS_NAME, "summary_subtotal_label")
         self.summary_total_details=(By.CLASS_NAME, "summary_total_label")
+        self.specific_product = (By.XPATH, "//div[@class='inventory_item_name']") # and text()='Sauce Labs Backpack']")
 
 
     def sort_products(self):
@@ -78,7 +79,21 @@ class admin:
         
         cart_count_after_removal = self.get_cart_count()
         print("Cart count after removal is:", cart_count_after_removal)   
-       
+    
+    
+    def remove_specific_product_from_cart (self, product_name):
+        cart = self.wait.until(EC.element_to_be_clickable(self.cart_button))
+        cart.click()   
+        for product in self.driver.find_elements(*self.specific_product):
+            if product.text == product_name:
+                remove_button = product.find_element(By.XPATH, ".//following::button[text()='Remove']")
+                remove_button.click()
+                self.driver.save_screenshot("Cart_screen.png")
+                #print("product.text",product.text)
+                break
+            else:
+                assert "Product is not occur"
+            
     def cart_details(self):
         cart = self.wait.until(EC.element_to_be_clickable(self.cart_button))
         cart.click()
