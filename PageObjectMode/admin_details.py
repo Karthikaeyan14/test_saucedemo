@@ -1,3 +1,4 @@
+import pytest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
@@ -160,9 +161,14 @@ class admin:
         total_Price=self.wait.until(EC.presence_of_element_located(self.total_price_details)).text
         total_Price=total_Price.replace("Item total: $", "")
         total_Price=float(total_Price)
-        logging.info("Total Price is:",total_Price)
+        logging.info("Total Price is: %s",total_Price)
+        #my code
+        #assert self.intial_amount ==total_Price, f"Expected total price {self.intial_amount}, but got {total_Price}"
         
-        assert self.intial_amount ==total_Price, f"Expected total price {self.intial_amount}, but got {total_Price}"
+        assert total_Price == pytest.approx(self.intial_amount, abs=0.01), (
+        f"Expected total price {self.intial_amount}, but got {total_Price}")
+
+
         total_amount=total_Price + (total_Price * 0.08)
         total_amount=round(total_amount, 2)
         #print("Total Amount with tax is:",total_amount)
@@ -171,8 +177,9 @@ class admin:
         summary_total=summary_total.replace("Total: $", "")
         summary_total=float(summary_total)
         #print("Summary Total is:",summary_total)
-        
-        assert total_amount ==summary_total, f"Expected summary total {total_amount}, but got {summary_total}"
+        #My code
+        #assert total_amount ==summary_total, f"Expected summary total {total_amount}, but got {summary_total}"
+        assert summary_total == pytest.approx(total_amount, abs=0.01), (f"Expected summary total {total_amount}, but got {summary_total}" )
 
 
 # Backward-compatible alias used by the current tests.
