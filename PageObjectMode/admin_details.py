@@ -2,6 +2,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.wait import WebDriverWait
+import logging
+
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class admin:
@@ -58,9 +63,9 @@ class admin:
         """Open the product listing, sort it, and add all available products to the cart."""
         self.sort_products()
         total_products = self.wait.until(EC.presence_of_all_elements_located(self.product_cards))
-        print("Total Product Count is:", len(total_products))
+        logging.info("Total Product Count is:", len(total_products))
         cart_count = self.add_all_products_to_cart()
-        print("Total cart Count is:", cart_count)
+        logging.info("Total cart Count is:", cart_count)
         return cart_count
 
     def remove_product_from_cart(self):
@@ -78,26 +83,27 @@ class admin:
            #expected_cart_count = initial_cart_count - 1
         
         cart_count_after_removal = self.get_cart_count()
-        print("Cart count after removal is:", cart_count_after_removal)   
+        logging.info("Cart count after removal is:", cart_count_after_removal)   
     
     
     def remove_specific_product_from_cart (self, product_name):
         cart = self.wait.until(EC.element_to_be_clickable(self.cart_button))
-        cart.click()   
-        for product in self.driver.find_elements(*self.specific_product):
-            if product.text == product_name:
-                remove_button = product.find_element(By.XPATH, ".//following::button[text()='Remove']")
-                remove_button.click()
-                self.driver.save_screenshot("Cart_screen.png")
-                #print("product.text",product.text)
-                break
-            else:
-                assert "Product is not occur"
+        cart.click()
+        
+        items = self.wait.until(EC.presence_of_all_elements_located(self.specific_product))   
+        for item in items:
+            if item.text == product_name:
+                row_remove = item.find_element(
+                By.XPATH, "./ancestor::div[@class='cart_item']//button[text()='Remove']")
+                row_remove.click()
+                self.wait.until(EC.staleness_of(item))   # row is gone from the DOM
+                return
+        raise AssertionError(f"'{product_name}' not found in cart. Found: {[i.text for i in items]}")
             
     def cart_details(self):
         cart = self.wait.until(EC.element_to_be_clickable(self.cart_button))
         cart.click()
-        print("Title of page:", self.driver.title)
+        logging.info("Title of page:", self.driver.title)
 
         checkout = self.wait.until(EC.element_to_be_clickable(self.checkout_button))
         checkout.click()
@@ -117,7 +123,7 @@ class admin:
 
     def processed(self):
         payment_info = self.wait.until(EC.presence_of_element_located(self.payment_info)).text
-        print(payment_info)
+        logging.info(payment_info)
 
         finish = self.wait.until(EC.element_to_be_clickable(self.finish_button))
         finish.click()
@@ -133,7 +139,7 @@ class admin:
         #self.method()
         cart = self.wait.until(EC.element_to_be_clickable(self.cart_button))
         cart.click()
-        print("Title of page:", self.driver.title)
+        logging.info("Title of page:", self.driver.title)
         cost_details = self.wait.until(EC.presence_of_all_elements_located(self.cost))
         self.intial_amount=0
         for price in cost_details:
@@ -144,7 +150,7 @@ class admin:
             #prices=float(price)+float(prices)
             
             #print(type(intial_amount))
-        print(self.intial_amount)
+        logging.info(self.intial_amount)
         
         checkout = self.wait.until(EC.element_to_be_clickable(self.checkout_button))
         checkout.click()
@@ -154,7 +160,7 @@ class admin:
         total_Price=self.wait.until(EC.presence_of_element_located(self.total_price_details)).text
         total_Price=total_Price.replace("Item total: $", "")
         total_Price=float(total_Price)
-        print("Total Price is:",total_Price)
+        logging.info("Total Price is:",total_Price)
         
         assert self.intial_amount ==total_Price, f"Expected total price {self.intial_amount}, but got {total_Price}"
         total_amount=total_Price + (total_Price * 0.08)

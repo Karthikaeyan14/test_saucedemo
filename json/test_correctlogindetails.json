@@ -1,14 +1,21 @@
 {
-    "data": [
-        {
-            "user_name": "standard_user",
-            "password": "secret_sauce"
-        }
-    ],
-    "wrong_data": [
-        {
-            "user_name": "wrong_user",
-            "password": "wrong_password"
-        }
-    ]
+  "data": [
+    {
+      "user_name": "standard_user",
+      "password": "secret_sauce"
+    }
+  ],
+  "wrong_data": [
+    {
+      "user_name": "wrong_user",
+      "password": "wrong_password"
+    }
+  ],
+  "Customer_details": [
+    {
+      "first_name": "karthi",
+      "last_name": "rajaguru",
+      "pincode": "613001"
+    }
+  ]
 }
